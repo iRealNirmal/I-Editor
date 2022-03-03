@@ -1,0 +1,43 @@
+{
+  "name": "i-editor",
+  "productName": "i-editor",
+  "description": "Application for taking screenshot and editing",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "scripts": {
+    "postinstall": "npm install fabric --no-optional",
+    "start": "electron . --allow-file-access-from-files",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . i-editor --overwrite --asar=false --platform=win32 --arch=ia32 --icon=src/assets/atom.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"IEditor\"  --ignore=\"/(release)\"",
+    "package-linux": "electron-packager . electron-tutorial-app --overwrite --asar=false --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds",
+    "pack": "build --dir"
+  },
+  "build" :{
+    "appId":"com.app.ieditor",
+    "icon": "build/icon.ico",
+    "productName":"I-Editor",
+     "nsis": {
+        "oneClick": false,
+        "allowToChangeInstallationDirectory": true
+     }
+  },
+  "keywords": [],
+  "author": "Nirmal Bhagwani",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^2.0.5",
+    "electron-packager": "^12.1.0",
+    "electron-winstaller": "^2.6.4",
+    "jQuery": "^1.7.4"
+  },
+  "dependencies": {
+    "blob-util": "^2.0.2",
+    "fabric": "^1.7.22",
+    "jQuery": "^1.7.4",
+    "react": "^16.4.1",
+    "tui-code-snippet": "^1.4.0",
+    "tui-color-picker": "^2.2.0",
+    "tui-image-editor": "^3.2.0"
+  }
+}
