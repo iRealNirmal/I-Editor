@@ -1,0 +1,74 @@
+<html>
+    <link type="text/css" href="libs/colorpicker.min.css" rel="stylesheet">
+    <link type="text/css" href="libs/tui-image-editor.css" rel="stylesheet">
+
+  <body>
+     <img id="a" />
+<div id="my-image-editor" >
+    <canvas></canvas>
+</div>
+<img id="a"/>
+<script src="libs/tui-code-snippet.min.js"></script>
+  <script src="./libs/jquery-2.2.4.min.js"></script>
+<script src="libs/fabric.min.js"></script>
+<script src="libs/tui-color-picker.js"></script>
+<script src="./libs/tui-image-editor.js"></script>
+<script>
+ if (window.module) module = window.module;
+ var fs = require('fs');
+ var imageEditor;
+    window.$ = window.jQuery = require('./libs/jquery-2.2.4.min.js');
+const {ipcRenderer, clipboard, electron} = require('electron');
+     const blackTheme = require('./libs/black-theme.js');
+     const colorpicker = require('./libs/tui-color-picker.js');
+require('./capture.js');
+
+ipcRenderer.on('screen-capture', (event, arg)=> {
+call(arg.paths);
+});
+
+    </script>    <script>
+function call(d){
+//console.log(d);
+// Create image editor
+imageEditor =  new tui.ImageEditor(document.querySelector('#my-image-editor'), {
+     includeUI: {
+         loadImage: {
+             path: d,
+             name: 'SampleImage'
+         },
+         theme: blackTheme, // or whiteTheme
+         initMenu: 'text',
+         menuBarPosition: 'bottom'
+     },
+    cssMaxWidth: 1600,
+    cssMaxHeight: 600,
+    selectionStyle: {
+        cornerSize: 20,
+        rotatingPointOffset: 70
+    }
+});
+}
+
+        
+
+window.addEventListener('DOMContentLoaded', _ => {
+  setTimeout(_=>{
+const saver = document.getElementsByClassName('tui-image-editor-download-btn2')[0]
+
+ saver.addEventListener('click', _ => {
+      ipcRenderer.send('save-file', { paths: imageEditor.toDataURL() });
+  }, false)
+  },400);
+
+});
+
+//imageEditor.addIcon('arrow'); // The position is center on canvas
+
+  
+
+
+    </script>
+  </body>
+</html>
+

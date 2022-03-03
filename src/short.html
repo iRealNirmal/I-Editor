@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <link type="text/css" href="libs/cropper.min.css" rel="stylesheet">
+        <style>
+html,body{ overflow: hidden !important; }
+    ::-webkit-scrollbar { display: none; } 
+ 
+         button{
+  background:#1AAB8A;
+  color:#fff;
+  border:none;
+  position:absolute;
+  right:30px;
+  top:30px;
+  height:60px;
+  font-size:1.6em;
+  padding:0 2em;
+  cursor:pointer;
+  transition:800ms ease all;
+  outline:none;
+  z-index: 500;
+}
+button:hover{
+  background:#fff;
+  color:#1AAB8A;
+}
+button:before,button:after{
+  content:'';
+  position:absolute;
+  top:0;
+  right:0;
+  height:2px;
+  width:0;
+  background: #1AAB8A;
+  transition:400ms ease all;
+}
+button:after{
+  right:inherit;
+  top:60px;;
+  left:0;
+  bottom:0;
+}
+button:hover:before,button:hover:after{
+  width:100%;
+  transition:800ms ease all;
+}
+body{
+  margin:0;
+}
+        </style>
+</head>
+<body>
+    <button id="crop" onclick="crop()" style="display:none;">Crop</button>
+<img src="instruction.png" width="100%" height="100%" id="short"/>
+    <script>require('./short')</script>
+    <script src="libs/cropper.min.js"></script>
+    <script>
+    const electron = require('electron')
+    const { desktopCapturer, ipcRenderer, screen } = electron
+    var c=false; var cropper;var flag=false;
+
+    function crop(){
+        let d= cropper.getCroppedCanvas().toDataURL('image/png');
+        document.getElementById('short').src=d;
+      //  electron.remote.getCurrentWindow().webContents.send();
+      setImmediate(_=>{
+
+        ipcRenderer.send('load-capture', { data: d, url: `file://${__dirname}/capture.html` })
+      });
+        //electron.remote.getCurrentWindow().webContents.send('screen-capture', { paths: d });
+  }
+  ipcRenderer.on('transfer', (event, arg)=> {
+    
+     getMainSource(desktopCapturer, screen, source => {
+       document.getElementById("crop").style.display = 'block';
+    call(source.thumbnail.toDataURL() );
+   c=true;
+  })
+    
+});
+function getMainSource(desktopCapturer, screen, done) {
+  const options = { types: ['screen'], thumbnailSize: screen.getPrimaryDisplay().workAreaSize }
+  desktopCapturer.getSources(options, (err, sources) => {
+    if (err) return console.log('Cannot capture screen:', err)
+
+    const isMainSource = source => source.name === 'Entire screen' || source.name === 'Screen 1';
+    console.log(sources.filter(isMainSource)[0])
+    done(sources.filter(isMainSource)[0])
+  })
+}
+
+    function call(i){
+
+        if(!flag){
+                if(typeof cropper !== 'undefined'){
+        cropper.destroy();
+      }
+      var element = document.getElementsByClassName('cropper-container');
+if (element.length > 0) {
+    console.log('why not')
+    element[0].parentNode.removeChild(element[0]);
+}
+
+      if(i !== undefined){
+        document.getElementById("short").src =i;
+      }
+          setTimeout(_=>{
+           console.log('created');
+           flag=true;
+            var image = document.getElementById('short');
+          cropper = new Cropper(image, {
+            zoomable :false,
+            crop(event) {
+            },
+          });
+         },40)
+        }
+         setTimeout(_=>{
+           flag=false;
+         },800);
+        
+    }
+    //call();
+    
+    
+
+</script>
+</body>
+</html>
